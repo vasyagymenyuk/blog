@@ -9,7 +9,7 @@ module.exports = [
       // SIGN-UP
       { method: 'POST', url: '/sign-up', controller: 'auth.signUp' },
       // // SIGN-IN
-      // { method: 'POST', url: '/sign-in', controller: 'auth.signIn' },
+      { method: 'POST', url: '/sign-in', controller: 'auth.signIn' },
     ],
   },
 ];
