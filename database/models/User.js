@@ -1,9 +1,11 @@
-const { Model } = require('sequelize');
+const { Model, ForeignKeyConstraintError } = require('sequelize');
 const bcrypt = require('bcryptjs');
 
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
-    static associate(models) {}
+    static associate({ Post }) {
+      this.hasMany(Post, { foreignKey: 'userId', as: 'posts' });
+    }
   }
 
   User.init(
