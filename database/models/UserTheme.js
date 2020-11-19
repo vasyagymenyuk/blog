@@ -1,28 +1,27 @@
 const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
-  class PostTags extends Model {
+  class UserTheme extends Model {
     static associate(models) {}
   }
 
-  PostTags.init(
+  UserTheme.init(
     {
-      postId: {
+      userId: {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
-
-      tagId: {
+      themeId: {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
     },
     {
       sequelize,
-      modelName: 'PostTags',
-      tableName: 'post_tags',
+      modelName: 'UserTheme',
+      tableName: 'user_theme',
     }
   );
 
-  return PostTags;
+  return UserTheme;
 };

@@ -9,12 +9,12 @@ module.exports = async (req, res, next) => {
   try {
     const payload = jwt.verify(access_token, process.env.JWT_SECRET_USER);
 
-    req.me = await User.findOne({
+    const user = await User.findOne({
       where: { id: payload.uid },
       attributes: { exclude: ['password'] },
     });
-    if (!req.me) return res.status(404).json();
-
+    if (!user) return res.status(404).json();
+    req.me = user;
     next();
   } catch (e) {
     console.log(e);

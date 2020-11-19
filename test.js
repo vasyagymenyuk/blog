@@ -2,11 +2,21 @@ function howMany(number) {
   const nums = number.toString().split('');
 }
 
+const nums = [1, 2, 3, 4, 5];
+//
+//
+//
+//
+//
+//
+//
+//
+
 // for (let i = 0; i < 3; i++) {
 //   const element = i;
 
 //   if (i > 1) continue;
-//   console.log('итерация снауржи');
+//   console.log('итерация снаружи');
 
 //   for (let t = 0; t < 4; t++) {
 //     const element = t;

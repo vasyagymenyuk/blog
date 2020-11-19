@@ -1,6 +1,6 @@
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('post_tags', {
+    await queryInterface.createTable('tag', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -8,14 +8,10 @@ module.exports = {
         type: Sequelize.INTEGER,
       },
 
-      postId: {
-        type: Sequelize.INTEGER,
+      tag: {
+        type: Sequelize.STRING,
         allowNull: false,
-      },
-
-      tagId: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
+        unique: true,
       },
 
       createdAt: {
@@ -29,6 +25,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('post_tags');
+    await queryInterface.dropTable('tag');
   },
 };

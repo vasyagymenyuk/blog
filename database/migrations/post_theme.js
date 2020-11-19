@@ -12,8 +12,8 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      theme: {
-        type: Sequelize.STRING,
+      themeId: {
+        type: Sequelize.INTEGER,
         allowNull: false,
       },
 
