@@ -17,7 +17,7 @@ app.use(reqValidation(require('./database/models/index').sequelize));
 app.use(
   '/',
   router(require('./routes'), {
-    middleware: __dirname + '/middlewares/',
+    middleware: __dirname + '/middleware/',
     controllers: __dirname + '/controllers/',
   })
 );

@@ -1,0 +1,15 @@
+[+] post(create, show, index, delete)
+
+[+] auth
+   /    \
+sign-up sign-in  
+
+[+] me
+   /  \
+[+]show   [+]update
+
+[-] user_tags
+[-] user_themes
+
+
+

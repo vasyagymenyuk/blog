@@ -19,13 +19,13 @@ exports.signUp = async (req, res) => {
 
   await User.create(data);
 
-  return res.status(201).json({ succes: true });
+  return res.status(201).json({ success: true });
 };
 
 //  SIGN-IN
 exports.signIn = async (req, res) => {
   const errors = await req.validation({
-    email: 'required|string|email|find:user-email',
+    email: `required|string|email|findRaw:SELECT * FROM user WHERE email = "${req.body.email}" AND deleted = "0"`,
     password: 'required|string',
   });
 
@@ -38,7 +38,7 @@ exports.signIn = async (req, res) => {
     user.password
   );
 
-  if (!passwordCompare) return res.json();
+  if (!passwordCompare) return res.status(400).json();
 
   const access_token = await jwt.sign(
     { uid: user.id },
@@ -46,5 +46,5 @@ exports.signIn = async (req, res) => {
     { expiresIn: '12h' }
   );
 
-  return res.status(201).json(access_token);
+  return res.json({ access_token });
 };

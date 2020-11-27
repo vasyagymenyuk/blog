@@ -1,44 +1,65 @@
-const { Post, PostTheme, PostTags } = require('../database/models/index');
-
+const { Post, PostTheme, PostTag } = require('../database/models/index');
+//  CREATE
 exports.create = async (req, res) => {
   const errors = await req.validation({
     title: 'required|string',
     content: 'required|string',
-  });
-  if (errors) return res.status(400).json(errors);
-
-  await Post.create({
-    userId: req.me.id,
-    title: req.body.title,
-    content: req.body.content,
+    themes: 'ifExists|required|array',
+    tags: 'ifExists|required|array',
   });
 
-  return res.status(201).json({ succes: true });
+  if (errors) return res.json(errors);
+
+  const data = req.only('title', 'content');
+
+  data.userId = req.me.id;
+
+  const post = await Post.create(data);
+
+  await post.addTags(req.body.tags);
+  await post.addThemes(req.body.themes);
+
+  return res.status(201).json({ success: true });
 };
-exports.delete = async (req, res) => {
-  const post = await Post.findOne({ where: { id: req.params.id } });
-  if (!post) return res.status(404).json();
 
-  const destroy = req.body.destroy && post.deleted;
-  if (destroy) await post.destroy();
-  else await post.update({ deleted: !post.deleted });
-
-  return res.json(destroy ? null : post.deleted ? true : false);
-};
-
+// INDEX
 exports.index = async (req, res) => {
-  const posts = await Post.findAll({ where: { deleted: false } });
+  const posts = await Post.findAll({
+    where: { deleted: false },
+    include: [
+      { model: PostTag, as: 'postTags', include: ['tags'] },
+      { model: PostTheme, as: 'postThemes', include: ['themes'] },
+    ],
+  });
 
-  if (!posts) return res.status(404).json();
-
-  return res.status(201).json(posts);
+  return res.json(posts);
 };
+
+// SHOW
 exports.show = async (req, res) => {
   const post = await Post.findOne({
     where: { id: req.params.id, deleted: false },
+    include: ['tags', 'themes'],
   });
 
   if (!post) return res.status(404).json();
 
-  return res.status(201).json(post);
+  return res.json(post);
+};
+
+// DELETE
+exports.delete = async (req, res) => {
+  const post = await Post.findOne({ where: { id: req.params.id } });
+
+  if (!post) return res.status(404).json();
+
+  const destroy = req.body.destroy && post.deleted;
+
+  if (destroy) {
+    await post.destroy();
+  } else {
+    await post.update({ deleted: !post.deleted });
+  }
+
+  return res.json(destroy ? null : post.deleted ? true : false);
 };

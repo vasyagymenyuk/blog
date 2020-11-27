@@ -1,19 +1,19 @@
-const { Tag, UserTag } = require('../database/models/index');
+const { Tag } = require('../database/models/index');
 
-// ПОКАЗЫВАЕТ ВСЕ ТЕГИ
+// CREATE
+exports.create = async (req, res) => {
+  const errors = req.validation({
+    tag: 'required|string|unique:tag',
+  });
+
+  if (errors) return res.json({ errors });
+
+  await Tag.create({ tag: req.body.tag });
+};
+
+// INDEX
 exports.index = async (req, res) => {
   const tags = await Tag.findAll();
 
-  if (!tags) return res.status(404).json();
-
-  return res.status(201).json(tags);
-};
-
-//  ПРИ ДОБАВЛЕНИИ ТЕГОВ К ПОСТУ ПОКАЗЫВАЕТ ПОЛЬЗОВАТЕЛЮ ТЕГИ, КОТОРЫЕ ОН ИСПОЛЬЗУЕТ
-exports.showUserTags = async (req, res) => {
-  const userTags = await UserTag.findAll({ where: { userId: req.me.id } });
-
-  if (!userTags) return res.status(404).json();
-
-  return res.status(201).json(userTags);
+  return res.json(tags);
 };

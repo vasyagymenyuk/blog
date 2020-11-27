@@ -18,14 +18,16 @@ module.exports = [
     url: '/me',
     middleware: 'auth',
     children: [
-      // SHOW ME
-      { method: 'GET', url: '/', controller: 'me/me.show' },
+      // SHOW
+      { method: 'GET', url: '/', controller: 'me.show' },
+      // UPDATE
+      { method: 'PUT', url: '/', controller: 'me.update' },
     ],
   },
 
   // POST
   {
-    url: '/post',
+    url: '/posts',
     children: [
       // CREATE
       {
@@ -34,6 +36,10 @@ module.exports = [
         middleware: 'auth',
         controller: 'post.create',
       },
+      // INDEX
+      { method: 'GET', url: '/', controller: 'post.index' },
+      // SHOW
+      { method: 'GET', url: '/:id', controller: 'post.show' },
       // DELETE
       {
         method: 'DELETE',
@@ -41,10 +47,6 @@ module.exports = [
         middleware: 'auth',
         controller: 'post.delete',
       },
-      // INDEX
-      { method: 'GET', url: '/', controller: 'post.index' },
-      // SHOW
-      { method: 'GET', url: '/:id', controller: 'post.show' },
     ],
   },
 
@@ -55,15 +57,21 @@ module.exports = [
   {
     url: '/tags',
     children: [
-      // INDEX-ALL-TAGS
+      // CREATE
+      {
+        method: 'POST',
+        url: '/',
+        middleware: 'auth',
+        controller: 'tag.create',
+      },
+      // INDEX
       { method: 'GET', url: '/', controller: 'tag.index' },
-
-      // SHOW-USER-TAGS
+      // SHOW
       {
         method: 'GET',
-        url: '/show-my-tags',
+        url: '/:id',
         middleware: 'auth',
-        controller: 'tag.showUserTags',
+        controller: 'tag.show',
       },
     ],
   },

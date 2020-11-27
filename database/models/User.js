@@ -1,11 +1,12 @@
-const { Model, ForeignKeyConstraintError } = require('sequelize');
+const { Model } = require('sequelize');
 const bcrypt = require('bcryptjs');
 
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
-    static associate({ Post, UserTheme }) {
+    static associate({ Post, Theme, Tag }) {
       this.hasMany(Post, { foreignKey: 'userId', as: 'posts' });
-      this.hasMany(UserTheme, { foreignKey: 'userId', as: 'userThemes' });
+      this.belongsToMany(Theme, { through: 'user_theme', as: 'themes' });
+      this.belongsToMany(Tag, { through: 'user_tag', as: 'tags' });
     }
   }
 
@@ -39,6 +40,12 @@ module.exports = (sequelize, DataTypes) => {
 
           this.setDataValue('password', password);
         },
+      },
+
+      deleted: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
       },
     },
     {

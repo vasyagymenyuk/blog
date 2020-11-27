@@ -2,7 +2,10 @@ const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
   class Theme extends Model {
-    static associate(models) {}
+    static associate({ Post, User }) {
+      // this.belongsToMany(Post, { through: 'post_theme' });
+      // this.belongsToMany(User, { through: 'user_theme' });
+    }
   }
 
   Theme.init(

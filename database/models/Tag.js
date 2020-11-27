@@ -2,7 +2,10 @@ const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
   class Tag extends Model {
-    static associate(models) {}
+    static associate({ Post, User }) {
+      // this.belongsToMany(Post, { through: 'post_tag' });
+      // this.belongsToMany(User, { through: 'user_tag' });
+    }
   }
 
   Tag.init(
