@@ -2,9 +2,15 @@ const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
   class Post extends Model {
-    static associate({ Theme, Tag }) {
+    static associate({ Theme, Tag, PostImages }) {
       this.belongsToMany(Theme, { through: 'post_theme', as: 'themes' });
       this.belongsToMany(Tag, { through: 'post_tag', as: 'tags' });
+      this.hasMany(PostImages, {
+        foreignKey: 'postId',
+        as: 'images',
+        onDelete: 'CASCADE',
+        hooks: true,
+      });
     }
   }
 
@@ -18,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      content: {
+      body: {
         type: DataTypes.STRING,
         allowNull: false,
       },

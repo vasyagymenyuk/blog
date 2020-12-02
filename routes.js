@@ -22,6 +22,13 @@ module.exports = [
       { method: 'GET', url: '/', controller: 'me.show' },
       // UPDATE
       { method: 'PUT', url: '/', controller: 'me.update' },
+      // ADD/UPDATE-AVATAR
+      {
+        method: 'POST',
+        url: '/',
+        middleware: 'uploads/avatars',
+        controller: 'me.addUpdateAvatar',
+      },
     ],
   },
 
@@ -35,6 +42,13 @@ module.exports = [
         url: '/',
         middleware: 'auth',
         controller: 'post.create',
+      },
+      // ADD-IMAGES
+      {
+        method: 'POST',
+        url: '/:id/add-images',
+        middleware: ['auth', 'uploads/postImages'],
+        controller: 'post.addImages',
       },
       // INDEX
       { method: 'GET', url: '/', controller: 'post.index' },

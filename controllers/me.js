@@ -1,4 +1,5 @@
-const { User, Theme, Tag } = require('../database/models/index');
+const { User, Theme, Tag, UserAvatar } = require('../database/models/index');
+const fs = require('fs');
 
 // SHOW
 exports.show = async (req, res) => {
@@ -6,6 +7,7 @@ exports.show = async (req, res) => {
     where: { id: req.me.id },
     attributes: { exclude: ['password'] },
     include: [
+      'avatar',
       'posts',
       { model: Theme, as: 'themes', through: { attributes: [] } },
       { model: Tag, as: 'tags', through: { attributes: [] } },
@@ -15,6 +17,7 @@ exports.show = async (req, res) => {
   return res.json(user);
 };
 
+// UPDATE
 exports.update = async (req, res) => {
   const user = await User.findOne({ where: { id: req.me.id, deleted: false } });
 
@@ -46,4 +49,32 @@ exports.update = async (req, res) => {
   await user.update(data);
 
   return res.json({ success: true });
+};
+
+// ADD/UPDATE AVATAR
+exports.addUpdateAvatar = async (req, res) => {
+  console.log('CONTROLLER');
+
+  const oldAvatar = await UserAvatar.findOne({ where: { userId: req.me.id } });
+
+  const file = req.file;
+
+  if (oldAvatar) {
+    try {
+      fs.unlinkSync(__dirname + '/../' + oldAvatar.src);
+    } catch (e) {
+      console.log(e);
+    }
+
+    await oldAvatar.destroy();
+  }
+
+  const { STORAGE_PATH, STORAGE_AVATARS_PATH } = process.env;
+
+  await UserAvatar.create({
+    userId: req.me.id,
+    src: STORAGE_PATH + STORAGE_AVATARS_PATH + file.filename,
+  });
+
+  return res.json({ succes: true });
 };

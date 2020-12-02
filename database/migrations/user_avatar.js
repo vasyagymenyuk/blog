@@ -1,6 +1,6 @@
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('post', {
+    await queryInterface.createTable('user_avatar', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -12,19 +12,9 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-
-      title: {
-        type: Sequelize.TEXT,
-        allowNull: false,
-      },
-      body: {
+      src: {
         type: Sequelize.STRING,
         allowNull: false,
-      },
-      deleted: {
-        type: Sequelize.BOOLEAN,
-        allowNull: false,
-        defaultValue: false,
       },
 
       createdAt: {
@@ -38,6 +28,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('post');
+    await queryInterface.dropTable('user_avatar');
   },
 };

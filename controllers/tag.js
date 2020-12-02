@@ -17,3 +17,8 @@ exports.index = async (req, res) => {
 
   return res.json(tags);
 };
+// SHOW
+exports.show = async (req, res) => {
+  // const tags = await Tag.findAll();
+  // return res.json(tags);
+};

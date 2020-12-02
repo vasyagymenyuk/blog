@@ -12,7 +12,8 @@
   "dependencies": {
     "amenov.pluralizejs": "^1.0.0",
     "amenov.req.onlyjs": "^1.0.5",
-    "amenov.req.validationjs": "^1.0.4",
+    "amenov.req.validationjs": "^1.0.6",
+    "amenov.req.wherebuilderjs": "^1.0.4",
     "amenov.routerjs": "^1.0.5",
     "amenov.validatorjs": "^1.1.3",
     "amenov.wherefilterjs": "^1.0.8",

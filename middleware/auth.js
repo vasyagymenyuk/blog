@@ -13,8 +13,11 @@ module.exports = async (req, res, next) => {
       where: { id: payload.uid },
       attributes: { exclude: ['password'] },
     });
+
     if (!user) return res.status(404).json();
+
     req.me = user;
+
     next();
   } catch (e) {
     console.log(e);

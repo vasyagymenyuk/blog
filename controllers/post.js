@@ -1,16 +1,21 @@
-const { Post, PostTheme, PostTag } = require('../database/models/index');
+const {
+  Post,
+  PostTheme,
+  PostTag,
+  PostImages,
+} = require('../database/models/index');
 //  CREATE
 exports.create = async (req, res) => {
   const errors = await req.validation({
     title: 'required|string',
-    content: 'required|string',
+    body: 'required|string',
     themes: 'ifExists|required|array',
     tags: 'ifExists|required|array',
   });
 
   if (errors) return res.json(errors);
 
-  const data = req.only('title', 'content');
+  const data = req.only('title', 'body');
 
   data.userId = req.me.id;
 
@@ -20,6 +25,40 @@ exports.create = async (req, res) => {
   await post.addThemes(req.body.themes);
 
   return res.status(201).json({ success: true });
+};
+
+// ADD-IMAGES
+exports.addImages = async (req, res) => {
+  const post = await Post.findOne({ where: { id: req.params.id } });
+
+  const images = req.files;
+
+  const { STORAGE_PATH, STORAGE_POST_IMAGES_PATH } = process.env;
+
+  if (!cargo) {
+    images.forEach((file) => {
+      try {
+        fs.unlinkSync(
+          __dirname +
+            '/../' +
+            STORAGE_PATH +
+            STORAGE_POST_IMAGES_PATH +
+            file.filename
+        );
+      } catch (e) {
+        console.log(e);
+      }
+    });
+
+    await PostImages.bulkCreate(
+      images.map((image) => ({
+        cargoId: cargo.id,
+        src: STORAGE_PATH + STORAGE_POST_IMAGES_PATH + image.filename,
+      }))
+    );
+
+    return res.json({ success: true });
+  }
 };
 
 // INDEX

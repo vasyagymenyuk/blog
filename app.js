@@ -5,6 +5,7 @@ const cors = require('cors');
 const reqOnly = require('amenov.req.onlyjs');
 const reqValidation = require('amenov.req.validationjs');
 const router = require('amenov.routerjs');
+const wherebuilder = require('amenov.req.wherebuilderjs');
 
 const app = express();
 
@@ -14,6 +15,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/storage', express.static(__dirname + process.env.STORAGE_PATH));
 app.use(reqOnly());
 app.use(reqValidation(require('./database/models/index').sequelize));
+app.use(wherebuilder());
 app.use(
   '/',
   router(require('./routes'), {
