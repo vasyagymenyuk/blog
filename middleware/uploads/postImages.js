@@ -1,28 +1,38 @@
 const multer = require('multer');
 const path = require('path');
+const moment = require('moment');
 
-const upload = multer({
-  storage: multer.diskStorage({
-    destination: function (req, file, cb) {
-      const { STORAGE_PATH, STORAGE_POST_IMAGES_PATH } = process.env;
+const storage = multer.diskStorage({
+  destination(req, file, cb) {
+    const { STORAGE_PATH, STORAGE_POST_IMAGES_PATH } = process.env;
 
-      cb(null, `${__dirname}/../..${STORAGE_PATH + STORAGE_POST_IMAGES_PATH}`);
-    },
-    filename: function (req, file, cb) {
-      cb(null, Date.now() + path.basename(file.originalname));
-    },
-  }),
-  limits: {
-    fileSize: 1024 * 1024 * 3,
+    cb(null, `${__dirname}/../..${STORAGE_PATH + STORAGE_POST_IMAGES_PATH}`);
   },
-  fileFilter(req, file, cb) {
-    if (file.mimetype.match(/png|jpg|jpeg/)) {
-      cb(null, true);
-    } else {
-      cb(null, false);
-    }
+  filename(req, file, cb) {
+    const date = moment().format('DDMMYYYY-HHmmss_SSS');
+
+    cb(null, `${date}-${file.originalname}`);
   },
-}).array('files[]', 3);
+});
+
+
+const filefilter = (req, file, cb) => {
+  if (
+    file.mimetype == 'image/png' ||
+    file.mimetype == 'image/jpg' ||
+    file.mimetype == 'image/jpeg'
+  ) {
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
+};
+
+const limits = {
+  filesize: 1024 * 1024 * 5,
+};
+
+const upload = multer({ storage, filefilter, limits }).array("images", 10)
 
 module.exports = (req, res, next) => {
   upload(req, res, (err) => {

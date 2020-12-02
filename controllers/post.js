@@ -66,8 +66,7 @@ exports.index = async (req, res) => {
   const posts = await Post.findAll({
     where: { deleted: false },
     include: [
-      { model: PostTag, as: 'postTags', include: ['tags'] },
-      { model: PostTheme, as: 'postThemes', include: ['themes'] },
+      "tags", "themes"
     ],
   });
 
@@ -92,6 +91,8 @@ exports.delete = async (req, res) => {
 
   if (!post) return res.status(404).json();
 
+  if(post.userId !== req.me.id) return res.status(403).json()
+
   const destroy = req.body.destroy && post.deleted;
 
   if (destroy) {
@@ -101,4 +102,5 @@ exports.delete = async (req, res) => {
   }
 
   return res.json(destroy ? null : post.deleted ? true : false);
-};
+}
+

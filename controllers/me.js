@@ -59,6 +59,8 @@ exports.addUpdateAvatar = async (req, res) => {
 
   const file = req.file;
 
+  if(!file) return res.status(400).json()
+
   if (oldAvatar) {
     try {
       fs.unlinkSync(__dirname + '/../' + oldAvatar.src);
