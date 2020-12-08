@@ -18,7 +18,7 @@ exports.signUp = async (req, res) => {
   const data = req.only('firstName', 'lastName', 'email', 'password');
 
   await User.create(data);
-
+  
   return res.status(201).json({ success: true });
 };
 
