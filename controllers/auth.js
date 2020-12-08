@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 
 const { User } = require('../database/models/index');
 
-//  SING-UP
+//  SIGN-UP
 exports.signUp = async (req, res) => {
   const errors = await req.validation({
     firstName: 'required|string',

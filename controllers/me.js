@@ -1,5 +1,6 @@
-const { User, Theme, Tag, UserAvatar } = require('../database/models/index');
 const fs = require('fs');
+
+const { User, Theme, Tag, UserAvatar } = require('../database/models/index');
 
 // SHOW
 exports.show = async (req, res) => {
@@ -53,8 +54,6 @@ exports.update = async (req, res) => {
 
 // ADD/UPDATE AVATAR
 exports.addUpdateAvatar = async (req, res) => {
-  console.log('CONTROLLER');
-
   const oldAvatar = await UserAvatar.findOne({ where: { userId: req.me.id } });
 
   const file = req.file;
@@ -69,12 +68,22 @@ exports.addUpdateAvatar = async (req, res) => {
     await oldAvatar.destroy();
   }
 
-  const { STORAGE_PATH, STORAGE_AVATARS_PATH } = process.env;
+  const uploadAvatar = require('./uploads/avatar');
+
+  try {
+    uploadAvatar(req, res, (err) => {
+      if (err) new Error(err);
+    });
+  } catch (err) {
+    console.log(err);
+
+    return res.json({ errors: { avatar: 'error' } });
+  }
 
   await UserAvatar.create({
     userId: req.me.id,
-    src: STORAGE_PATH + STORAGE_AVATARS_PATH + file.filename,
+    src: process.env.STORAGE_AVATARS_PATH + file.filename,
   });
 
-  return res.json({ succes: true });
+  return res.json({ success: true });
 };

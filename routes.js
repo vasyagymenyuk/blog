@@ -26,7 +26,6 @@ module.exports = [
       {
         method: 'POST',
         url: '/',
-        middleware: 'uploads/avatars',
         controller: 'me.addUpdateAvatar',
       },
     ],
@@ -47,7 +46,7 @@ module.exports = [
       {
         method: 'POST',
         url: '/:id/add-images',
-        middleware: ['auth', 'uploads/postImages'],
+        middleware: ['auth'],
         controller: 'post.addImages',
       },
       // INDEX

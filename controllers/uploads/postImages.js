@@ -4,9 +4,9 @@ const moment = require('moment');
 
 const storage = multer.diskStorage({
   destination(req, file, cb) {
-    const { STORAGE_PATH, STORAGE_AVATARS_PATH } = process.env;
+    const { STORAGE_PATH, STORAGE_POST_IMAGES_PATH } = process.env;
 
-    cb(null, `${__dirname}/../..${STORAGE_PATH + STORAGE_AVATARS_PATH}`);
+    cb(null, `${__dirname}/../..${STORAGE_PATH + STORAGE_POST_IMAGES_PATH}`);
   },
   filename(req, file, cb) {
     const date = moment().format('DDMMYYYY-HHmmss_SSS');
@@ -31,7 +31,7 @@ const limits = {
   filesize: 1024 * 1024 * 2,
 };
 
-const upload = multer({ storage, filefilter, limits }).single('avatar');
+const upload = multer({ storage, filefilter, limits }).array('postImages', 10);
 
 module.exports = (req, res, next) => {
   upload(req, res, (err) => {

@@ -1,3 +1,5 @@
+const fs = require('fs');
+
 const {
   Post,
   PostTheme,
@@ -29,13 +31,15 @@ exports.create = async (req, res) => {
 
 // ADD-IMAGES
 exports.addImages = async (req, res) => {
-  const post = await Post.findOne({ where: { id: req.params.id } });
+  const post = await Post.findOne({
+    where: { id: req.params.id, userId: req.me.id },
+  });
 
   const images = req.files;
 
   const { STORAGE_PATH, STORAGE_POST_IMAGES_PATH } = process.env;
 
-  if (!cargo) {
+  if (!post) {
     images.forEach((file) => {
       try {
         fs.unlinkSync(
@@ -50,9 +54,11 @@ exports.addImages = async (req, res) => {
       }
     });
 
+    return res.status(400).json({ success: false });
+  } else {
     await PostImages.bulkCreate(
       images.map((image) => ({
-        cargoId: cargo.id,
+        postId: post.id,
         src: STORAGE_PATH + STORAGE_POST_IMAGES_PATH + image.filename,
       }))
     );
@@ -88,7 +94,9 @@ exports.show = async (req, res) => {
 
 // DELETE
 exports.delete = async (req, res) => {
-  const post = await Post.findOne({ where: { id: req.params.id } });
+  const post = await Post.findOne({
+    where: { id: req.params.id, userId: req.me.id },
+  });
 
   if (!post) return res.status(404).json();
 
