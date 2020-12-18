@@ -1,23 +1,24 @@
-const fs = require('fs');
+const fs = require("fs");
 
 const {
   Post,
   PostTheme,
   PostTag,
   PostImages,
-} = require('../database/models/index');
+} = require("../database/models/index");
+
 //  CREATE
 exports.create = async (req, res) => {
   const errors = await req.validation({
-    title: 'required|string',
-    body: 'required|string',
-    themes: 'ifExists|required|array',
-    tags: 'ifExists|required|array',
+    title: "required|string",
+    body: "required|string",
+    themes: "ifExists|required|array",
+    tags: "ifExists|required|array",
   });
 
   if (errors) return res.json(errors);
 
-  const data = req.only('title', 'body');
+  const data = req.only("title", "body");
 
   data.userId = req.me.id;
 
@@ -32,7 +33,7 @@ exports.create = async (req, res) => {
 // ADD-IMAGES
 exports.addImages = async (req, res) => {
   const post = await Post.findOne({
-    where: { id: req.params.id, userId: req.me.id },
+    where: { id: req.params.id, userId: req.me.id, deleted: 0 },
   });
 
   const images = req.files;
@@ -44,7 +45,7 @@ exports.addImages = async (req, res) => {
       try {
         fs.unlinkSync(
           __dirname +
-            '/../' +
+            "/../" +
             STORAGE_PATH +
             STORAGE_POST_IMAGES_PATH +
             file.filename
@@ -54,8 +55,8 @@ exports.addImages = async (req, res) => {
       }
     });
 
-    return res.status(400).json({ success: false });
-  } else {
+    return res.status(403).json({ success: false });
+  } else
     await PostImages.bulkCreate(
       images.map((image) => ({
         postId: post.id,
@@ -63,17 +64,14 @@ exports.addImages = async (req, res) => {
       }))
     );
 
-    return res.json({ success: true });
-  }
+  return res.json({ success: true });
 };
 
 // INDEX
 exports.index = async (req, res) => {
   const posts = await Post.findAll({
     where: { deleted: false },
-    include: [
-      "tags", "themes"
-    ],
+    include: ["tags", "themes"],
   });
 
   return res.json(posts);
@@ -83,7 +81,7 @@ exports.index = async (req, res) => {
 exports.show = async (req, res) => {
   const post = await Post.findOne({
     where: { id: req.params.id, deleted: false },
-    include: ['tags', 'themes'],
+    include: ["tags", "themes"],
   });
 
   if (!post) return res.status(404).json();
@@ -99,16 +97,19 @@ exports.delete = async (req, res) => {
 
   if (!post) return res.status(404).json();
 
-  if(post.userId !== req.me.id) return res.status(403).json()
-
   const destroy = req.body.destroy && post.deleted;
 
   if (destroy) {
+    const imagesForDeleting = await PostImages.destroy({
+      where: { postId: post.id },
+    });
+    console.log(imagesForDeleting);
+    // удалить файлы из storage с помощью postImages.src
+
     await post.destroy();
   } else {
     await post.update({ deleted: !post.deleted });
   }
 
   return res.json(destroy ? null : post.deleted ? true : false);
-}
-
+};

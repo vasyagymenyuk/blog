@@ -1,90 +1,91 @@
 module.exports = [
   // INDEX
-  { method: 'GET', url: '/', controller: 'index.index' },
+  { method: "GET", url: "/", controller: "index.index" },
 
   // AUTH
   {
-    url: '/auth',
+    url: "/auth",
     children: [
       // SIGN-UP
-      { method: 'POST', url: '/sign-up', controller: 'auth.signUp' },
+      { method: "POST", url: "/sign-up", controller: "auth.signUp" },
       // // SIGN-IN
-      { method: 'POST', url: '/sign-in', controller: 'auth.signIn' },
+      { method: "POST", url: "/sign-in", controller: "auth.signIn" },
     ],
   },
 
   // ME
   {
-    url: '/me',
-    middleware: 'auth',
+    url: "/me",
+    middleware: "auth",
     children: [
       // SHOW
-      { method: 'GET', url: '/', controller: 'me.show' },
+      { method: "GET", url: "/", controller: "me.show" },
       // UPDATE
-      { method: 'PUT', url: '/', controller: 'me.update' },
+      { method: "PUT", url: "/", controller: "me.update" },
       // ADD/UPDATE-AVATAR
       {
-        method: 'POST',
-        url: '/',
-        controller: 'me.addUpdateAvatar',
+        method: "POST",
+        url: "/",
+        middleware: "uploads/avatar",
+        controller: "me.addUpdateAvatar",
       },
     ],
   },
 
   // POST
   {
-    url: '/posts',
+    url: "/posts",
     children: [
       // CREATE
       {
-        method: 'POST',
-        url: '/',
-        middleware: 'auth',
-        controller: 'post.create',
+        method: "POST",
+        url: "/",
+        middleware: "auth",
+        controller: "post.create",
       },
       // ADD-IMAGES
       {
-        method: 'POST',
-        url: '/:id/add-images',
-        middleware: ['auth'],
-        controller: 'post.addImages',
+        method: "POST",
+        url: "/:id/add-images",
+        middleware: ["auth", "uploads/postImages"],
+        controller: "post.addImages",
       },
       // INDEX
-      { method: 'GET', url: '/', controller: 'post.index' },
+      { method: "GET", url: "/", controller: "post.index" },
       // SHOW
-      { method: 'GET', url: '/:id', controller: 'post.show' },
+      { method: "GET", url: "/:id", controller: "post.show" },
       // DELETE
       {
-        method: 'DELETE',
-        url: '/:id',
-        middleware: 'auth',
-        controller: 'post.delete',
+        method: "DELETE",
+        url: "/:id",
+        middleware: "auth",
+        controller: "post.delete",
       },
     ],
   },
 
   // THEMES-INDEX
-  { url: '/themes', method: 'GET', controller: 'theme.index' },
+  { url: "/themes", method: "GET", controller: "theme.index" },
 
   // TAGS
   {
-    url: '/tags',
+    url: "/tags",
     children: [
       // CREATE
       {
-        method: 'POST',
-        url: '/',
-        middleware: 'auth',
-        controller: 'tag.create',
+        method: "POST",
+        url: "/",
+        middleware: "auth",
+        controller: "tag.create",
       },
       // INDEX
-      { method: 'GET', url: '/', controller: 'tag.index' },
+      { method: "GET", url: "/", controller: "tag.index" },
       // SHOW
       {
-        method: 'GET',
-        url: '/:id',
-        middleware: 'auth',
-        controller: 'tag.show',
+        method: "GET",
+        url: "/:id",
+        middleware: "auth",
+        controller: "tag.show",
       },
     ],
   },

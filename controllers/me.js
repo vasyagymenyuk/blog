@@ -1,17 +1,17 @@
-const fs = require('fs');
+const fs = require("fs");
 
-const { User, Theme, Tag, UserAvatar } = require('../database/models/index');
+const { User, Theme, Tag, UserAvatar } = require("../database/models/index");
 
 // SHOW
 exports.show = async (req, res) => {
   const user = await User.findOne({
     where: { id: req.me.id },
-    attributes: { exclude: ['password'] },
+    attributes: { exclude: ["password"] },
     include: [
-      'avatar',
-      'posts',
-      { model: Theme, as: 'themes', through: { attributes: [] } },
-      { model: Tag, as: 'tags', through: { attributes: [] } },
+      "avatar",
+      "posts",
+      { model: Theme, as: "themes", through: { attributes: [] } },
+      { model: Tag, as: "tags", through: { attributes: [] } },
     ],
   });
 
@@ -25,26 +25,26 @@ exports.update = async (req, res) => {
   if (!user) return res.status(404).json();
 
   const errors = await req.validation({
-    firstName: req.me.firstName != req.body.firstName && 'ifExists|string',
-    lastName: req.me.lastName != req.body.lastName && 'ifExists|string',
+    firstName: req.me.firstName != req.body.firstName && "ifExists|string",
+    lastName: req.me.lastName != req.body.lastName && "ifExists|string",
     email:
-      req.me.email != req.body.email && 'ifExists|string|email|unique:user',
-    tel: req.me.tel != req.body.tel && 'ifExists|string|unique:user',
-    about: req.me.about != req.body.about && 'ifExists|string',
-    birthday: req.me.birthday != req.body.birthday && 'ifExists|string',
-    password: 'ifExists|required|string',
-    passwordConfirmation: 'ifExists|required|string|as:password',
+      req.me.email != req.body.email && "ifExists|string|email|unique:user",
+    tel: req.me.tel != req.body.tel && "ifExists|string|unique:user",
+    about: req.me.about != req.body.about && "ifExists|string",
+    birthday: req.me.birthday != req.body.birthday && "ifExists|string",
+    password: "ifExists|required|string",
+    passwordConfirmation: "ifExists|required|string|as:password",
   });
   if (errors) return res.json({ errors });
 
   const data = req.only(
-    'firstName',
-    'lastName',
-    'email',
-    'tel',
-    'about',
-    'birthday',
-    'password'
+    "firstName",
+    "lastName",
+    "email",
+    "tel",
+    "about",
+    "birthday",
+    "password"
   );
 
   await user.update(data);
@@ -58,11 +58,11 @@ exports.addUpdateAvatar = async (req, res) => {
 
   const file = req.file;
 
-  if(!file) return res.status(400).json()
+  if (!file) return res.status(400).json();
 
   if (oldAvatar) {
     try {
-      fs.unlinkSync(__dirname + '/../' + oldAvatar.src);
+      fs.unlinkSync(__dirname + "/../" + oldAvatar.src);
     } catch (e) {
       console.log(e);
     }
@@ -70,22 +70,14 @@ exports.addUpdateAvatar = async (req, res) => {
     await oldAvatar.destroy();
   }
 
-  const uploadAvatar = require('./uploads/avatar');
-
-  try {
-    uploadAvatar(req, res, (err) => {
-      if (err) new Error(err);
-    });
-  } catch (err) {
-    console.log(err);
-
-    return res.json({ errors: { avatar: 'error' } });
-  }
+  const { STORAGE_PATH, STORAGE_AVATARS_PATH } = process.env;
 
   await UserAvatar.create({
     userId: req.me.id,
-    src: process.env.STORAGE_AVATARS_PATH + file.filename,
+    src: STORAGE_PATH + STORAGE_AVATARS_PATH + file.filename,
   });
 
   return res.json({ success: true });
 };
+
+// exports.deleteAvatar = async (req, res) => {};
