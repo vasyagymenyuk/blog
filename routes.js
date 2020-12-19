@@ -22,12 +22,24 @@ module.exports = [
       { method: "GET", url: "/", controller: "me.show" },
       // UPDATE
       { method: "PUT", url: "/", controller: "me.update" },
-      // ADD/UPDATE-AVATAR
+      // AVATAR
       {
-        method: "POST",
-        url: "/",
-        middleware: "uploads/avatar",
-        controller: "me.addUpdateAvatar",
+        url: "/avatar",
+        children: [
+          // ADD/UPDATE
+          {
+            method: "POST",
+            url: "/add-update",
+            middleware: "uploads/avatar",
+            controller: "me.addUpdateAvatar",
+          },
+          // DELETE
+          {
+            method: "DELETE",
+            url: "/delete",
+            controller: "me.deleteAvatar",
+          },
+        ],
       },
     ],
   },

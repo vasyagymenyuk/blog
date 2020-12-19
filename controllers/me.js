@@ -12,6 +12,7 @@ exports.show = async (req, res) => {
       "posts",
       { model: Theme, as: "themes", through: { attributes: [] } },
       { model: Tag, as: "tags", through: { attributes: [] } },
+      // показываются только первые теги и темы
     ],
   });
 
@@ -80,4 +81,20 @@ exports.addUpdateAvatar = async (req, res) => {
   return res.json({ success: true });
 };
 
-// exports.deleteAvatar = async (req, res) => {};
+exports.deleteAvatar = async (req, res) => {
+  // удалить аватарку из файлов, используюя путь из базы,
+  // удалить запись из базы
+  const userAvatar = await UserAvatar.findOne({ where: { userId: req.me.id } });
+
+  if (!userAvatar) return res.status(404).json();
+
+  try {
+    fs.unlinkSync(__dirname + "/../" + userAvatar.src);
+  } catch (e) {
+    console.log(e);
+  }
+
+  await userAvatar.destroy();
+
+  return res.json({ success: true });
+};

@@ -27,6 +27,8 @@ exports.create = async (req, res) => {
   await post.addTags(req.body.tags);
   await post.addThemes(req.body.themes);
 
+  // при создании поста теги и темы должны добавляться в user_tag И user_theme, повторяющие добавляться не должны.
+
   return res.status(201).json({ success: true });
 };
 
@@ -100,11 +102,21 @@ exports.delete = async (req, res) => {
   const destroy = req.body.destroy && post.deleted;
 
   if (destroy) {
-    const imagesForDeleting = await PostImages.destroy({
+    const imagesForDeleting = await PostImages.findAll({
       where: { postId: post.id },
     });
-    console.log(imagesForDeleting);
-    // удалить файлы из storage с помощью postImages.src
+
+    if (!imagesForDeleting) return res.status(404).json();
+
+    imagesForDeleting.forEach((img) => {
+      try {
+        fs.unlinkSync(__dirname + "/../" + img.src);
+      } catch (e) {
+        console.log(e);
+      }
+    });
+
+    await PostImages.destroy({ where: { postId: post.id } });
 
     await post.destroy();
   } else {
