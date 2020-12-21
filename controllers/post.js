@@ -91,6 +91,25 @@ exports.show = async (req, res) => {
   return res.json(post);
 };
 
+// UPDATE
+exports.update = async (req, res) => {
+  const post = await Post.findOne({ where: { userId: req.me.id } });
+
+  if (!post) return res.status(404).json();
+
+  const errors = await req.validation({
+    title: post.title != req.body.title && "ifExists|string",
+    body: post.body != req.body.body && "ifExists|string",
+  });
+  if (errors) return res.json({ errors });
+
+  const data = req.only("title", "body");
+
+  await post.update(data);
+
+  return res.json({ success: true });
+};
+
 // DELETE
 exports.delete = async (req, res) => {
   const post = await Post.findOne({
@@ -117,6 +136,10 @@ exports.delete = async (req, res) => {
     });
 
     await PostImages.destroy({ where: { postId: post.id } });
+
+    await PostTheme.destroy({ where: { postId: post.id } });
+
+    await PostTag.destroy({ where: { postId: post.id } });
 
     await post.destroy();
   } else {

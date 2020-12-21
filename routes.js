@@ -66,6 +66,8 @@ module.exports = [
       { method: "GET", url: "/", controller: "post.index" },
       // SHOW
       { method: "GET", url: "/:id", controller: "post.show" },
+      // UPDATE
+      { method: "PUT", url: "/:id/update", controller: "post.update" },
       // DELETE
       {
         method: "DELETE",
