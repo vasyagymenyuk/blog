@@ -1,24 +1,24 @@
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
-const { User } = require('../database/models/index');
+const { User } = require("../database/models/index");
 
 //  SIGN-UP
 exports.signUp = async (req, res) => {
   const errors = await req.validation({
-    firstName: 'required|string',
-    lastName: 'ifExists|string',
-    email: 'required|string|email|unique:user',
-    password: 'required|string',
-    passwordConfirmation: 'required|string|as:password',
+    firstName: "required|string",
+    lastName: "ifExists|string",
+    email: "required|string|email|unique:user",
+    password: "required|string",
+    passwordConfirmation: "required|string|as:password",
   });
 
   if (errors) return res.json({ errors });
 
-  const data = req.only('firstName', 'lastName', 'email', 'password');
+  const data = req.only("firstName", "lastName", "email", "password");
 
   await User.create(data);
-  
+
   return res.status(201).json({ success: true });
 };
 
@@ -26,7 +26,7 @@ exports.signUp = async (req, res) => {
 exports.signIn = async (req, res) => {
   const errors = await req.validation({
     email: `required|string|email|findRaw:SELECT * FROM user WHERE email = "${req.body.email}" AND deleted = "0"`,
-    password: 'required|string',
+    password: "required|string",
   });
 
   if (errors) return res.json({ errors });
@@ -43,7 +43,7 @@ exports.signIn = async (req, res) => {
   const access_token = await jwt.sign(
     { uid: user.id },
     process.env.JWT_SECRET_USER,
-    { expiresIn: '12h' }
+    { expiresIn: "12h" }
   );
 
   return res.json({ access_token });

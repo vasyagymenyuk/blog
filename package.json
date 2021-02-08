@@ -4,8 +4,8 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "dev": "nodemon cluster",
-    "start": "node cluster"
+    "dev": "nodemon app",
+    "start": "node app"
   },
   "devDependencies": {
     "nodemon": "^2.0.6"
